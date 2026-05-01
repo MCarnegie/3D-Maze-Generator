@@ -1,8 +1,25 @@
+import * as t from 'three';
 let moveForward = false;
 let moveBackward = false;
 let moveLeft = false;
 let moveRight = false;
+let characterController;
+let player
 
+export function createp(px, py, pz, physics, scene, ph, pw) {
+    const geometry = new t.CapsuleGeometry(pw, ph, 8, 8);
+    const material = new t.MeshStandardMaterial({ color: 0x0000ff });
+    player = new t.Mesh(geometry, material);
+    player.position.set(px, py, pz);
+
+    characterController = physics.world.createCharacterController(0.01);
+    characterController.setApplyImpulsesToDynamicBodies(true);
+    characterController.setCharacterMass(pw);
+    const colliderDesc = physics.RAPIER.ColliderDesc.capsule(ph, pw).setTranslation(px, ph, pz);
+    player.userData.collider = physics.world.createCollider(colliderDesc);
+
+
+}
 
 
 export function controlDetection() {
@@ -77,13 +94,14 @@ export function controlDetection() {
 // const velocity = new t.Vector3();
 // const direction = new t.Vector3();
 
-export function movement(playerHeight, playerMass, speed, velocity, direction, prevTime, time, controls) {
+export function movement(playerHeight, playerMass, speed, velocity, direction,
+    prevTime, time, controls, camera, physics) {
 
 
     const delta = (time - prevTime) / 1000; //change in time
 
-    velocity.x -= velocity.x * speed * delta;
-    velocity.z -= velocity.z * speed * delta;
+    velocity.x -= velocity.x * 0.8 * delta;
+    velocity.z -= velocity.z * 0.8 * delta;
 
     const g = 9.81;
     velocity.y -= g * playerMass * delta; // 100.0 = mass
@@ -99,15 +117,39 @@ export function movement(playerHeight, playerMass, speed, velocity, direction, p
     if (moveLeft || moveRight)
         velocity.x -= direction.x * speed * delta;
 
+    const forward = new t.Vector3();
+    const right = new t.Vector3();
 
-    controls.moveRight(- velocity.x * delta);
-    controls.moveForward(- velocity.z * delta);
+    controls.object.getWorldDirection(forward);
+    forward.y = 0;
+    forward.normalize();
 
-    //controls.object.position.y += (velocity.y * delta);
+    right.crossVectors(forward, new t.Vector3(0, 1, 0)).normalize();
 
+    // build the move vector relative to where the camera is looking
+    const moveVec = new t.Vector3();
+    moveVec.addScaledVector(forward, -velocity.z * delta);
+    moveVec.addScaledVector(right, -velocity.x * delta);
 
-    
-    // console.log(delta)
+    const moveVector = new physics.RAPIER.Vector3(
+        moveVec.x,
+        velocity.y * delta, // gravity
+        moveVec.z
+    );
+
+    characterController.computeColliderMovement(player.userData.collider, moveVector);
+    const translation = characterController.computedMovement();
+    const position = player.userData.collider.translation();
+
+    position.x += translation.x;
+    position.y += translation.y;
+    position.z += translation.z;
+
+    player.userData.collider.setTranslation(position);
+    player.position.set(position.x, position.y, position.z);
+
+    controls.object.position.set(position.x, position.y, position.z)
+
 
 }
 

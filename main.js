@@ -1,9 +1,11 @@
 import * as t from 'three';
-import Ammo from 'ammo.js'
-import { AmmoPhysics } from 'three/addons/physics/AmmoPhysics.js';
-import { controlDetection, movement } from './controls.js';
+import { RapierPhysics } from 'three/addons/physics/RapierPhysics.js';
+import { RapierHelper } from 'three/addons/helpers/RapierHelper.js';
+import { controlDetection, movement, createp } from './controls.js';
 import { PointerLockControls } from 'three/addons/controls/PointerLockControls.js';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+
 
 
 const objects = [];
@@ -16,10 +18,11 @@ let moveLeft = false;
 let moveRight = false;
 let canJump = false;
 
-const physics = await AmmoPhysics();
+const physics = await RapierPhysics();
+
 const vertex = new t.Vector3();
 const color = new t.Color();
-
+console.log(physics)
 function main() {
 
     const canvas = document.querySelector('#c');
@@ -32,23 +35,27 @@ function main() {
     scene.background = new t.Color(0xffffff);
     scene.fog = new t.Fog(0xffffff, 0, 750);
 
+    physics.addScene(scene)
 
+    let physicsHelper  = new RapierHelper(physics.world)
+    scene.add(physicsHelper)
+    
     const fov = 75;
     const aspect = window.innerWidth / window.innerHeight;  // the canvas default
     const near = 1;
     const far = 1000;
     const px = 0;
     const py = 2;
-    const pz = 5
+    const pz = 8
     //fov, aspect ratio, near(clipping plane), far(clipping plane)
     const camera = new t.PerspectiveCamera(fov, aspect,
         near, far
     );
     camera.position.set(px, py, pz);
-    camera.lookAt(0, 0, 0);
 
 
-    
+
+
     const controls = new PointerLockControls(camera, canvas)
     scene.add(controls.object);
     const overlay = document.getElementById("overlay")
@@ -72,16 +79,29 @@ function main() {
 
 
 
-    const planeg = new t.PlaneGeometry(2000, 2000, 100, 100)
+    const planeg = new t.BoxGeometry(5, 0.5, 5)
     const planem = new t.MeshBasicMaterial({ color: 0x808080 })
     const plane = new t.Mesh(planeg, planem)
-    plane.rotation.x = Math.PI * -.5;
+
+    plane.position.y = -0.25;
+    physics.addMesh(plane)
     scene.add(plane)
+        const helpter = new t.BoxHelper( plane, 0xffff00 );
+    scene.add(helpter)
 
     const helper = new t.BoxHelper(plane, 0xffff00);
     scene.add(helper)
 
-    const boxWidth = 1;
+    let pheight = 3;
+    let pwidth = 1;
+    let pmass = 100;
+    let pspeed = 800;
+    //player charector
+    let p = createp(px,py,pz, physics, scene, pheight, pwidth);
+
+
+
+    const boxWidth = 5;
     const boxHeight = 1;
     const boxDepth = 1;
     const cgeometry = new t.BoxGeometry(boxWidth, boxHeight, boxDepth); // object that contains all verticies and faces of the cube
@@ -105,39 +125,47 @@ function main() {
     // scene.add(cube)// adds cube to point (0,0,0)
     // scene.add(line)
 
-    function makeCubeInstance(geometry, color, x, y, z) {
+    function makeCubeInstance(geometry, color, x, y, z, r) {
         const material = new t.MeshPhongMaterial({ color });
         const cube = new t.Mesh(geometry, material)
-        scene.add(cube)
-
+        
+        
         cube.position.x = x;
         cube.position.y = y;
         cube.position.z = z;
+        cube.rotation.y = r;
+        physics.addMesh(cube, 100000)
+        scene.add(cube)
         return cube
     }
 
 
     const cubes = [
-        makeCubeInstance(cgeometry, 0x44aa88, 0, 0.5, 4),
-        makeCubeInstance(cgeometry, 0x000000, 0, 0.5, 4),
-        makeCubeInstance(cgeometry, 0xffffff, 0, 0.5, 4),
+        makeCubeInstance(cgeometry, 0x44aa88, 3, 0, -3, Math.PI),
+        makeCubeInstance(cgeometry, 0x000000, 0, 0, 0,Math.PI/2),
+        makeCubeInstance(cgeometry, 0x44aa88, 3, 0, 3, Math.PI),
+
+        
+
     ]
 
     let prevTime = performance.now();
-    let pheight = 10;
-    let pmass = 100;
-    let pspeed = 800;
+    
     function render() {
         const time = performance.now();
 
-        movement(pheight,pmass,pspeed,new t.Vector3(), new t.Vector3(),prevTime, time, controls)
+        movement(pheight, pmass, pspeed, new t.Vector3(), new t.Vector3(), prevTime, time, 
+        controls,camera,physics)
         prevTime = time;
-        
+
+        helpter.update();
         renderer.render(scene, camera);
 
         requestAnimationFrame(render);
     }
     requestAnimationFrame(render);
 }
+
+
 
 main();
