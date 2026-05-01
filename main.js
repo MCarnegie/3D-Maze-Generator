@@ -1,7 +1,10 @@
 import * as t from 'three';
-import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-import { FlyControls } from 'three/addons/controls/FlyControls.js';
+import Ammo from 'ammo.js'
+import { AmmoPhysics } from 'three/addons/physics/AmmoPhysics.js';
+import { controlDetection, movement } from './controls.js';
 import { PointerLockControls } from 'three/addons/controls/PointerLockControls.js';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
 
 const objects = [];
 
@@ -13,9 +16,7 @@ let moveLeft = false;
 let moveRight = false;
 let canJump = false;
 
-let prevTime = performance.now();
-const velocity = new t.Vector3();
-const direction = new t.Vector3();
+const physics = await AmmoPhysics();
 const vertex = new t.Vector3();
 const color = new t.Color();
 
@@ -36,23 +37,22 @@ function main() {
     const aspect = window.innerWidth / window.innerHeight;  // the canvas default
     const near = 1;
     const far = 1000;
+    const px = 0;
+    const py = 2;
+    const pz = 5
     //fov, aspect ratio, near(clipping plane), far(clipping plane)
     const camera = new t.PerspectiveCamera(fov, aspect,
         near, far
     );
-    camera.position.set(0, 2, 5);
+    camera.position.set(px, py, pz);
     camera.lookAt(0, 0, 0);
 
 
-    const light = new t.HemisphereLight(0xeeeeff, 0x777788, 2.5);
-    light.position.set(0.5, 1, 0.75);
-    scene.add(light)
-
-
+    
     const controls = new PointerLockControls(camera, canvas)
     scene.add(controls.object);
-
     const overlay = document.getElementById("overlay")
+    controlDetection();
 
     overlay.addEventListener('click', () => {
         controls.lock()
@@ -64,70 +64,13 @@ function main() {
         overlay.style.display = 'flex';
     });
 
-    const onKeyDown = function (event) {
 
-        switch (event.code) {
+    const light = new t.HemisphereLight(0xeeeeff, 0x777788, 2.5);
+    light.position.set(0.5, 1, 0.75);
+    scene.add(light)
 
-            case 'ArrowUp':
-            case 'KeyW':
-                moveForward = true;
-                break;
 
-            case 'ArrowLeft':
-            case 'KeyA':
-                moveLeft = true;
-                break;
 
-            case 'ArrowDown':
-            case 'KeyS':
-                moveBackward = true;
-                break;
-
-            case 'ArrowRight':
-            case 'KeyD':
-                moveRight = true;
-                break;
-
-            case 'Space':
-                if (canJump === true) velocity.y += 350;
-                canJump = false;
-                break;
-
-        }
-
-    };
-
-    const onKeyUp = function (event) {
-
-        switch (event.code) {
-
-            case 'ArrowUp':
-            case 'KeyW':
-                moveForward = false;
-                break;
-
-            case 'ArrowLeft':
-            case 'KeyA':
-                moveLeft = false;
-                break;
-
-            case 'ArrowDown':
-            case 'KeyS':
-                moveBackward = false;
-                break;
-
-            case 'ArrowRight':
-            case 'KeyD':
-                moveRight = false;
-                break;
-
-        }
-
-    };
-    document.addEventListener('keydown', onKeyDown);
-    document.addEventListener('keyup', onKeyUp);
-
-    raycaster = new t.Raycaster(new t.Vector3(), new t.Vector3(0, - 1, 0), 0, 10);
 
     const planeg = new t.PlaneGeometry(2000, 2000, 100, 100)
     const planem = new t.MeshBasicMaterial({ color: 0x808080 })
@@ -135,6 +78,8 @@ function main() {
     plane.rotation.x = Math.PI * -.5;
     scene.add(plane)
 
+    const helper = new t.BoxHelper(plane, 0xffff00);
+    scene.add(helper)
 
     const boxWidth = 1;
     const boxHeight = 1;
@@ -160,73 +105,34 @@ function main() {
     // scene.add(cube)// adds cube to point (0,0,0)
     // scene.add(line)
 
-    function makeInstance(geometry, color, x, y) {
+    function makeCubeInstance(geometry, color, x, y, z) {
         const material = new t.MeshPhongMaterial({ color });
         const cube = new t.Mesh(geometry, material)
         scene.add(cube)
 
         cube.position.x = x;
         cube.position.y = y;
+        cube.position.z = z;
         return cube
     }
 
 
     const cubes = [
-        makeInstance(cgeometry, 0x44aa88, 0, 0.5),
+        makeCubeInstance(cgeometry, 0x44aa88, 0, 0.5, 4),
+        makeCubeInstance(cgeometry, 0x000000, 0, 0.5, 4),
+        makeCubeInstance(cgeometry, 0xffffff, 0, 0.5, 4),
     ]
 
+    let prevTime = performance.now();
+    let pheight = 10;
+    let pmass = 100;
+    let pspeed = 800;
     function render() {
         const time = performance.now();
 
-        if (controls.isLocked === true) {
-
-            raycaster.ray.origin.copy(controls.object.position);
-            raycaster.ray.origin.y -= 10;
-
-            const intersections = raycaster.intersectObjects(objects, false);
-
-            const onObject = intersections.length > 0;
-
-            const delta = (time - prevTime) / 1000;
-
-            velocity.x -= velocity.x * 10.0 * delta;
-            velocity.z -= velocity.z * 10.0 * delta;
-
-            velocity.y -= 9.8 * 100.0 * delta; // 100.0 = mass
-
-            direction.z = Number(moveForward) - Number(moveBackward);
-            direction.x = Number(moveRight) - Number(moveLeft);
-            direction.normalize(); // this ensures consistent movements in all directions
-
-            if (moveForward || moveBackward) velocity.z -= direction.z * 400.0 * delta;
-            if (moveLeft || moveRight) velocity.x -= direction.x * 400.0 * delta;
-
-            if (onObject === true) {
-
-                velocity.y = Math.max(0, velocity.y);
-                canJump = true;
-
-            }
-
-            controls.moveRight(- velocity.x * delta);
-            controls.moveForward(- velocity.z * delta);
-
-            controls.object.position.y += (velocity.y * delta); // new behavior
-
-            if (controls.object.position.y < 2) {
-
-                velocity.y = 0;
-                controls.object.position.y = 2;
-
-                canJump = true;
-
-            }
-
-        }
-
+        movement(pheight,pmass,pspeed,new t.Vector3(), new t.Vector3(),prevTime, time, controls)
         prevTime = time;
-
-
+        
         renderer.render(scene, camera);
 
         requestAnimationFrame(render);
