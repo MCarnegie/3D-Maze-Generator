@@ -1,4 +1,4 @@
-#TODOLIST
+# TODOLIST
 1. Make stuff appear on screen - DONE
 2. add physics collision - DONE
 3. Make Wall Class
