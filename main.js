@@ -79,7 +79,7 @@ function main() {
 
 
 
-    const planeg = new t.BoxGeometry(5, 0.5, 5)
+    const planeg = new t.BoxGeometry(100, 0.5, 100)
     const planem = new t.MeshBasicMaterial({ color: 0x808080 })
     const plane = new t.Mesh(planeg, planem)
 
@@ -102,7 +102,7 @@ function main() {
 
 
     const boxWidth = 5;
-    const boxHeight = 1;
+    const boxHeight = 0.01;
     const boxDepth = 1;
     const cgeometry = new t.BoxGeometry(boxWidth, boxHeight, boxDepth); // object that contains all verticies and faces of the cube
     // const cmaterial = new t.MeshPhongMaterial({ color: 0x44aa88 }); //material to cover the obeject
@@ -124,6 +124,9 @@ function main() {
 
     // scene.add(cube)// adds cube to point (0,0,0)
     // scene.add(line)
+
+    const axesHelper = new t.AxesHelper(5);
+scene.add(axesHelper);
 
     function makeCubeInstance(geometry, color, x, y, z, r) {
         const material = new t.MeshPhongMaterial({ color });
