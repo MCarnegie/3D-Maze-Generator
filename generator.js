@@ -1,4 +1,4 @@
-//https://weblog.jamisbuck.org/2010/12/27/maze-generation-recursive-backtracking
+//what it is based on -> https://weblog.jamisbuck.org/2010/12/27/maze-generation-recursive-backtracking
 
 /**
  *  What we need for the generator
@@ -8,12 +8,21 @@
  * 
  */
 
+import * as t from 'three';
 
 export class Maze {
-    constructor(width, height) {
-        this.width = width;
-        this.height = height;
+    //number of cells in x, number of cells in z,
+    //geometry of wall, material of wall, scene its in, physics it uses
+    constructor(mazeWidth, mazeHeight, wallWidth, wallHeight, wallDepth, scene, physics) {
+        this.width = mazeWidth;
+        this.height = mazeHeight;
+        this.geometry = new t.BoxGeometry(wallWidth, wallHeight, wallDepth);
+        this.scene = scene;
+        this.physics = physics;
         this.grid;
+        this.wallWidth = wallWidth;
+        this.wallHeight = wallHeight;
+        this.wallDepth = wallDepth
         this.dx = { "E": 1, "W": -1, "N": 0, "S": 0 }
         this.dy = { "E": 0, "W": 0, "N": -1, "S": 1 }
         this.opposite = { "E": "W", "W": "E", "N": "S", "S": "N" }
@@ -51,6 +60,61 @@ export class Maze {
 
 
 
+    }
+
+    renderMaze(cx, cy, gap) {
+        this.generategrid();
+        this.grid[cx][cy].v = true;
+        this.generateMaze(cx, cy);
+    
+        
+        for (let i = 0; i < this.grid.length; i++) {
+            
+            
+            for (let j = 0; j < this.grid[0].length; j++) {
+                let xpos =this.wallWidth*j;
+                let zpos = this.wallWidth*i;
+
+                let cell = this.grid[i][j];
+            
+                if (cell["N"]) {
+                    this.makeWall(xpos,zpos,0, 0xFFFFFF)//WHITE
+                }
+                if(cell["S"]){
+                     this.makeWall(xpos,zpos+this.wallDepth + this.wallWidth,0, 0x000000)//BLACK
+                }
+                if(cell["W"]){
+                     this.makeWall(xpos-this.wallWidth/2,zpos+this.wallWidth/2,Math.PI/2, 0x0000FF) //BLUE
+                }
+                if(cell["E"]){
+                     this.makeWall(xpos+this.wallWidth/2,zpos+this.wallWidth/2,Math.PI/2, 0xFF0000)//RED
+                }
+                
+            }
+            
+  
+        }
+        
+
+
+    }
+
+    //make with with x position, z positon, and rotation
+    makeWall(x, z, r, color) {
+
+        const material = new t.MeshPhongMaterial({ color });
+        const cube = new t.Mesh(this.geometry, material)
+
+        //adding the wall width/2 and depth/2 to the position aligns 
+        //the maze to the axis of the 3d world, not really nesscary but easier
+        //for debugging
+        cube.position.x = x+this.wallWidth/2;
+        cube.position.z = z+this.wallDepth/2;
+        cube.position.y = this.wallHeight/2
+        cube.rotation.y = r;
+        this.physics.addMesh(cube, 0)
+        this.scene.add(cube)
+        return cube
     }
 
 

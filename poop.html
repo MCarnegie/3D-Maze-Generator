@@ -55,7 +55,7 @@ class Maze {
             let nx = cx + this.dx[d]
             let ny =  cy + this.dy[d]
             //valid cell
-            if(nx>=0 && nx<this.width && ny>=0 &&ny<this.height && !this.grid[ny][nx].v){
+            if(nx>=0 && nx<this.width && ny>=0 &&ny<this.height && this.grid[ny][nx].v != true){
                 this.grid[ny][nx].v = true;
                 this.grid[cy][cx][d]-=1;
                 let opposite = this.opposite[d]
@@ -91,6 +91,7 @@ class Maze {
     for (let y = 0; y < this.height; y++) {
         for (let x = 0; x < this.width; x++) {
             const cell = this.grid[y][x];
+            console.log(cell)
             const px = x * cellSize;
             const py = y * cellSize;
 
@@ -124,7 +125,7 @@ class Maze {
 }
 }
 
-let p = new Maze(20, 20, 20);
+let p = new Maze(2, 2, 20);
 p.generategrid()
 console.log(p.grid)
 p.generateMaze(0,0)
