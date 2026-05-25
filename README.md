@@ -8,3 +8,4 @@
 7. Make a timer to display while doing the maze
 8. When you reach end of maze, display time and prompt player to restart
 9. Have another mode where you have to collect items in the maze while being chased by an enemy
+10. Add Textures to walls and sounds
