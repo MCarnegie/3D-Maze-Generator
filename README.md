@@ -4,6 +4,9 @@
 4. Make Maze Generator - DONE, created based off of recursive backtracking
    link for tutorial used: https://weblog.jamisbuck.org/2010/12/27/maze-generation-recursive-backtracking
 5. Put 2d maze generated into 3d space - DONE
-6. Make ability to see top of maze almost like a map
+6. Make ability to switch between birds eye view of maze and first person - DONE
+   *Modified so that the camera goes orbital from the players current
+   positon so they can see where they are in maze and make bigger mazes easier to solve
 7. Make a timer to display while doing the maze
 8. When you reach end of maze, display time and prompt player to restart
+9. Make menu to put in custom values for mazes
