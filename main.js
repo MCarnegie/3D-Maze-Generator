@@ -4,7 +4,7 @@ import { RapierHelper } from 'three/addons/helpers/RapierHelper.js';
 import { controlDetection, movement, createp, getOveheadview, setControls } from './controls.js';
 import { PointerLockControls } from 'three/addons/controls/PointerLockControls.js';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-import { Maze } from './Generator.js';
+import { Maze } from './generator.js';
 
 
 
