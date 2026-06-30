@@ -13,3 +13,8 @@
 10. Have another mode where you have to collect items in the maze while being chased by an enemy
 11. Add Textures to walls and sounds
 12. Maze rendering optimizations - DONE
+
+
+You can find the current deployed version here: https://mcarnegie.github.io/3D-Maze-Generator/
+DISCLAIMER:USE KEYBOARD AND MOUSE FOR THIS TO WORK 
+CONTROL: WASD to move, MOUSE to look around, Q to switch from POV to Orbital Camera
