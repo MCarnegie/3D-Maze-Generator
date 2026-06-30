@@ -9,6 +9,10 @@
  */
 
 import * as t from 'three';
+import rapier from 'https://cdn.skypack.dev/@dimforge/rapier3d-compat';
+await rapier.init();
+import * as BufferGeometryUtils from 'three/addons/utils/BufferGeometryUtils.js';
+import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 
 export class Maze {
     //number of cells in x, number of cells in z,
@@ -22,10 +26,11 @@ export class Maze {
         this.grid;
         this.wallWidth = wallWidth;
         this.wallHeight = wallHeight;
-        this.wallDepth = wallDepth
+        this.wallDepth = wallDepth;
         this.dx = { "E": 1, "W": -1, "N": 0, "S": 0 }
         this.dy = { "E": 0, "W": 0, "N": -1, "S": 1 }
         this.opposite = { "E": "W", "W": "E", "N": "S", "S": "N" }
+        this.geometries = []
     }
 
     generategrid() {
@@ -66,35 +71,40 @@ export class Maze {
         this.generategrid();
         this.grid[cx][cy].v = true;
         this.generateMaze(cx, cy);
-    
-        
+
+
         for (let i = 0; i < this.grid.length; i++) {
-            
-            
+
+
             for (let j = 0; j < this.grid[0].length; j++) {
-                let xpos =this.wallWidth*j;
-                let zpos = this.wallWidth*i;
+                let xpos = this.wallWidth * j;
+                let zpos = this.wallWidth * i;
 
                 let cell = this.grid[i][j];
-            
+
                 if (cell["N"]) {
-                    this.makeWall(xpos,zpos,0, 0xFFFFFF)//WHITE
+                    this.makeWall(xpos, zpos, 0, 0xFFFFFF)//WHITE
                 }
-                if(cell["S"]){
-                     this.makeWall(xpos,zpos+this.wallDepth + this.wallWidth,0, 0x000000)//BLACK
+                if (cell["S"]) {
+                    this.makeWall(xpos, zpos + this.wallDepth + this.wallWidth, 0, 0x000000)//BLACK
                 }
-                if(cell["W"]){
-                     this.makeWall(xpos-this.wallWidth/2,zpos+this.wallWidth/2,Math.PI/2, 0x0000FF) //BLUE
+                if (cell["W"]) {
+                    this.makeWall(xpos - this.wallWidth / 2, zpos + this.wallWidth / 2, Math.PI / 2, 0x0000FF) //BLUE
                 }
-                if(cell["E"]){
-                     this.makeWall(xpos+this.wallWidth/2,zpos+this.wallWidth/2,Math.PI/2, 0xFF0000)//RED
+                if (cell["E"]) {
+                    this.makeWall(xpos + this.wallWidth / 2, zpos + this.wallWidth / 2, Math.PI / 2, 0xFF0000)//RED
                 }
-                
+
             }
-            
-  
+
+
         }
-        
+
+        const material = new t.MeshPhongMaterial({ color: 0x000000 });
+        let merged = mergeGeometries(this.geometries, false)
+        let mesh = new t.Mesh(merged, material)
+        this.scene.add(mesh)
+
 
 
     }
@@ -102,19 +112,51 @@ export class Maze {
     //make with with x position, z positon, and rotation
     makeWall(x, z, r, color) {
 
-        const material = new t.MeshPhongMaterial({ color });
-        const cube = new t.Mesh(this.geometry, material)
+        // const material = new t.MeshPhongMaterial({ color });
+        // const cube = new t.Mesh(this.geometry, material)
+        let rQuanternion = this.angleToQuaternion(r)
+        let geo = this.geometry.clone()
+        let matrix = new t.Matrix4().compose(
+            //position
+            new t.Vector3( x + this.wallWidth / 2,this.wallHeight / 2 ,z + this.wallDepth / 2),
+            //rotation
+            new t.Quaternion(rQuanternion.x,   rQuanternion.y, rQuanternion.z, rQuanternion.w),
+            //scale
+            new t.Vector3(1,1,1)
+        )
+        geo.applyMatrix4(matrix)
+        this.geometries.push(geo)
+       
+        
+        let collider = this.physics.RAPIER.ColliderDesc.cuboid(this.wallWidth/2,this.wallHeight/2, this.wallDepth/2 )
+        .setTranslation(x + this.wallWidth / 2,  this.wallHeight / 2, z + this.wallDepth / 2)
+        .setRotation(rQuanternion)
+
+        this.physics.world.createCollider(collider)
+
 
         //adding the wall width/2 and depth/2 to the position aligns 
         //the maze to the axis of the 3d world, not really nesscary but easier
         //for debugging
-        cube.position.x = x+this.wallWidth/2;
-        cube.position.z = z+this.wallDepth/2;
-        cube.position.y = this.wallHeight/2
-        cube.rotation.y = r;
-        this.physics.addMesh(cube, 0)
-        this.scene.add(cube)
-        return cube
+        // cube.position.x = x + this.wallWidth / 2;
+        // cube.position.z = z + this.wallDepth / 2;
+        // cube.position.y = this.wallHeight / 2
+        // cube.rotation.y = r;
+        // // this.physics.addMesh(cube, 0)
+        // this.scene.add(cube)
+        // return cube
+    }
+
+    angleToQuaternion(angle, axis = { x: 0, y: 1, z: 0 }) {
+        const halfAngle = angle / 2;
+        const s = Math.sin(halfAngle);
+        return {
+            w: Math.cos(halfAngle),
+            x: axis.x * s,
+            y: axis.y * s,
+            z: axis.z * s,
+            
+        };
     }
 
 

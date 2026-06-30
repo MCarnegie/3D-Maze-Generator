@@ -5,7 +5,9 @@ import { controlDetection, movement, createp, getOveheadview, setControls } from
 import { PointerLockControls } from 'three/addons/controls/PointerLockControls.js';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { Maze } from './generator.js';
-
+import Stats from 'three/addons/libs/stats.module.js';
+const stats = new Stats();
+document.body.appendChild(stats.dom);
 
 
 
@@ -27,6 +29,7 @@ const color = new t.Color();
 function main() {
 
     const canvas = document.querySelector('#c');
+
     // creating renderer
     const renderer = new t.WebGLRenderer({ antialias: true, canvas });
     renderer.setSize(window.innerWidth, window.innerHeight);
@@ -124,7 +127,7 @@ function main() {
         prevTime = time;
         helpter.update();
         renderer.render(scene, camera);
-
+        stats.update()
         requestAnimationFrame(render);
     }
     requestAnimationFrame(render);

@@ -12,3 +12,4 @@
 9. Make menu to put in custom values for mazes
 10. Have another mode where you have to collect items in the maze while being chased by an enemy
 11. Add Textures to walls and sounds
+12. Maze rendering optimizations - DONE
