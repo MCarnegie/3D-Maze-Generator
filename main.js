@@ -106,8 +106,8 @@ function main() {
 
 
     //creating maze
-    const mazeWidth = 99
-    const mazeHeight = 99;
+    const mazeWidth = 80
+    const mazeHeight = 80;
     const wallWidth = 3;
     const wallHeight = 5;
     const wallDepth = 0.1;
