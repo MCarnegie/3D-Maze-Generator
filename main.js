@@ -61,7 +61,7 @@ function main() {
     const camera = new t.PerspectiveCamera(fov, aspect,
         near, far
     );
-    camera.position.set(px, py, pz);
+    camera.position.set(0, py, 0);
 
 
     //toggling between controls
@@ -76,10 +76,14 @@ function main() {
     scene.add(light)
 
     //creating plane
-    const planeg = new t.BoxGeometry(500, 0.5, 500)
+    let planeW = 500
+    let planeL = 500
+    const planeg = new t.BoxGeometry(planeW, 0.5, planeL)
     const planem = new t.MeshBasicMaterial({ color: 0x808080 })
     const plane = new t.Mesh(planeg, planem)
 
+    plane.position.x = planeW/2
+    plane.position.z = planeL/2
     plane.position.y = -0.25;
     physics.addMesh(plane)
     scene.add(plane)
@@ -92,7 +96,7 @@ function main() {
     let pmass = 100;
     let pspeed = 800;
     //player charector
-    let p = createp(px, py, pz, physics, scene, py, pwidth);
+    
 
 
 
@@ -102,17 +106,18 @@ function main() {
 
 
     //creating maze
-    const mazeWidth = 40;
-    const mazeHeight = 80;
+    const mazeWidth = 99
+    const mazeHeight = 99;
     const wallWidth = 3;
     const wallHeight = 5;
     const wallDepth = 0.1;
 
 
     let maze = new Maze(mazeWidth, mazeHeight, wallWidth, wallHeight, wallDepth, scene, physics)
-   
+    
+    let p = createp(wallWidth/2, py, wallWidth/2, physics, scene, py, pwidth);
     setControls(camera, canvas, mazeWidth, wallWidth, mazeHeight)
-
+    
     //render the maze
     maze.renderMaze(0, 0, 5)
 
@@ -120,7 +125,7 @@ function main() {
     let prevTime = performance.now();
     function render() {
         const time = performance.now();
-
+        
         movement(pheight, pmass, pspeed, new t.Vector3(), new t.Vector3(), prevTime, time, camera, physics,
             {})
 

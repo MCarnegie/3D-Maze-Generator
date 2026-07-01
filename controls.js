@@ -133,8 +133,8 @@ export function movement(playerHeight, playerMass, speed, velocity, direction,
         setOrbitPositions = false
         pointerLockControls.enabled = true
         orbitControls.enabled = false
-        const delta = (time - prevTime) / 1000; //change in time
-
+        const delta = Math.min((time - prevTime) / 1000, 1/60); //change in time
+        console.log(delta)
         velocity.x -= velocity.x * 0.8 * delta;
         velocity.z -= velocity.z * 0.8 * delta;
 
@@ -146,7 +146,7 @@ export function movement(playerHeight, playerMass, speed, velocity, direction,
         direction.z = Number(moveForward) - Number(moveBackward);//cant go backwards and forward at same time
         direction.x = Number(moveRight) - Number(moveLeft);//cant go left and right at same time
         direction.normalize();
-
+        
         // v = 
         if (moveForward || moveBackward)
             velocity.z -= direction.z * speed * delta;
@@ -173,7 +173,7 @@ export function movement(playerHeight, playerMass, speed, velocity, direction,
             moveVec.z
         );
 
-
+        
         characterController.computeColliderMovement(player.userData.collider, moveVector);
         const translation = characterController.computedMovement();
         const position = player.userData.collider.translation();

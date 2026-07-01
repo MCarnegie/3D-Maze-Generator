@@ -86,7 +86,7 @@ export class Maze {
                     this.makeWall(xpos, zpos, 0, 0xFFFFFF)//WHITE
                 }
                 if (cell["S"]) {
-                    this.makeWall(xpos, zpos + this.wallDepth + this.wallWidth, 0, 0x000000)//BLACK
+                    this.makeWall(xpos, zpos + this.wallWidth, 0, 0x000000)//BLACK
                 }
                 if (cell["W"]) {
                     this.makeWall(xpos - this.wallWidth / 2, zpos + this.wallWidth / 2, Math.PI / 2, 0x0000FF) //BLUE
@@ -105,7 +105,17 @@ export class Maze {
         let mesh = new t.Mesh(merged, material)
         this.scene.add(mesh)
 
-
+        //location of last square should be x:this.mazeWidth*this.wallWidth z:this.mazeLength*this.wallWidth
+        let platformHeight = 0.1
+        const fsm = new t.MeshPhongMaterial({color: 0xFF0000})
+        const fsg= new t.BoxGeometry(this.wallWidth, platformHeight, this.wallWidth)
+        const finalSquare = new t.Mesh(fsg, fsm) 
+        
+        finalSquare.position.x = this.width*this.wallWidth-this.wallWidth/2
+          finalSquare.position.y = platformHeight / 2
+        finalSquare.position.z = this.height*this.wallWidth-this.wallWidth/2
+    
+        this.scene.add(finalSquare)
 
     }
 
