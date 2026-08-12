@@ -31,6 +31,8 @@ export class Maze {
         this.dy = { "E": 0, "W": 0, "N": -1, "S": 1 }
         this.opposite = { "E": "W", "W": "E", "N": "S", "S": "N" }
         this.geometries = []
+        this.walls = []
+
     }
 
     generategrid() {
@@ -103,18 +105,19 @@ export class Maze {
         const material = new t.MeshPhongMaterial({ color: 0x000000 });
         let merged = mergeGeometries(this.geometries, false)
         let mesh = new t.Mesh(merged, material)
+        mesh.name = "currmaze"
         this.scene.add(mesh)
 
         //location of last square should be x:this.mazeWidth*this.wallWidth z:this.mazeLength*this.wallWidth
         let platformHeight = 0.1
-        const fsm = new t.MeshPhongMaterial({color: 0xFF0000})
-        const fsg= new t.BoxGeometry(this.wallWidth, platformHeight, this.wallWidth)
-        const finalSquare = new t.Mesh(fsg, fsm) 
-        
-        finalSquare.position.x = this.width*this.wallWidth-this.wallWidth/2
-          finalSquare.position.y = platformHeight / 2
-        finalSquare.position.z = this.height*this.wallWidth-this.wallWidth/2
-    
+        const fsm = new t.MeshPhongMaterial({ color: 0xFF0000 })
+        const fsg = new t.BoxGeometry(this.wallWidth, platformHeight, this.wallWidth)
+        const finalSquare = new t.Mesh(fsg, fsm)
+
+        finalSquare.position.x = this.width * this.wallWidth - this.wallWidth / 2
+        finalSquare.position.y = platformHeight / 2
+        finalSquare.position.z = this.height * this.wallWidth - this.wallWidth / 2
+        finalSquare.name = "finalsquare"
         this.scene.add(finalSquare)
 
     }
@@ -128,33 +131,23 @@ export class Maze {
         let geo = this.geometry.clone()
         let matrix = new t.Matrix4().compose(
             //position
-            new t.Vector3( x + this.wallWidth / 2,this.wallHeight / 2 ,z + this.wallDepth / 2),
+            new t.Vector3(x + this.wallWidth / 2, this.wallHeight / 2, z + this.wallDepth / 2),
             //rotation
-            new t.Quaternion(rQuanternion.x,   rQuanternion.y, rQuanternion.z, rQuanternion.w),
+            new t.Quaternion(rQuanternion.x, rQuanternion.y, rQuanternion.z, rQuanternion.w),
             //scale
-            new t.Vector3(1,1,1)
+            new t.Vector3(1, 1, 1)
         )
         geo.applyMatrix4(matrix)
         this.geometries.push(geo)
-       
-        
-        let collider = this.physics.RAPIER.ColliderDesc.cuboid(this.wallWidth/2,this.wallHeight/2, this.wallDepth/2 )
-        .setTranslation(x + this.wallWidth / 2,  this.wallHeight / 2, z + this.wallDepth / 2)
-        .setRotation(rQuanternion)
-
-        this.physics.world.createCollider(collider)
 
 
-        //adding the wall width/2 and depth/2 to the position aligns 
-        //the maze to the axis of the 3d world, not really nesscary but easier
-        //for debugging
-        // cube.position.x = x + this.wallWidth / 2;
-        // cube.position.z = z + this.wallDepth / 2;
-        // cube.position.y = this.wallHeight / 2
-        // cube.rotation.y = r;
-        // // this.physics.addMesh(cube, 0)
-        // this.scene.add(cube)
-        // return cube
+        let collider = this.physics.RAPIER.ColliderDesc.cuboid(this.wallWidth / 2, this.wallHeight / 2, this.wallDepth / 2)
+            .setTranslation(x + this.wallWidth / 2, this.wallHeight / 2, z + this.wallDepth / 2)
+            .setRotation(rQuanternion)
+
+        let colliderPhys = this.physics.world.createCollider(collider)
+        this.walls.push(colliderPhys)
+
     }
 
     angleToQuaternion(angle, axis = { x: 0, y: 1, z: 0 }) {
@@ -165,10 +158,34 @@ export class Maze {
             x: axis.x * s,
             y: axis.y * s,
             z: axis.z * s,
-            
+
         };
     }
 
+    clearMaze(scene) {
+        const mazeMesh = scene.getObjectByName('currmaze');
+        if (mazeMesh) {
+            scene.remove(mazeMesh);
+            mazeMesh.geometry.dispose(); // free the merged buffer
+            mazeMesh.material.dispose();
+        }
+
+        const finalSquare = scene.getObjectByName('finalsquare');
+        if (finalSquare) {
+            scene.remove(finalSquare);
+            finalSquare.geometry.dispose();
+            finalSquare.material.dispose();
+        }
+
+        for (const collider of this.walls) {
+            this.physics.world.removeCollider(collider, true);
+        }
+        this.walls.length = 0;
+
+        this.geometries.forEach(g => g.dispose()); 
+        this.geometries.length = 0;
+
+    }
 
 
 

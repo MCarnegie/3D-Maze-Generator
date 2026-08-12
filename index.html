@@ -1,27 +1,11 @@
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="utf-8">
     <title>3D Maze Generator</title>
     <style>
-        body {
-            margin: 0;
-        }
 
-        #instructions {
-            width: 100%;
-            height: 100%;
-
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-
-            text-align: center;
-            font-size: 14px;
-            cursor: pointer;
-        }
     </style>
     <script type="importmap">
         {
@@ -40,7 +24,156 @@
     <canvas id="c"></canvas>
 
 
-</body>
+</body> -->
+
+<!DOCTYPE html>
+<html lang="en">
+ 
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>3D Maze Generator</title>
+    <link rel="stylesheet" href="./style.css">
+    <script type="importmap">
+        {
+        "imports": {
+            "three": "https://cdn.jsdelivr.net/npm/three@v0.184.0/build/three.module.js",
+            "three/addons/": "https://cdn.jsdelivr.net/npm/three@v0.184.0/examples/jsm/"
+        }
+        }
+    </script>
+</head>
+ 
+<body>
+    <script type="module" src="./main.js"></script>
+    <div id="app">
+ 
+        <header id="site-header">
+            <div class="brand">
+                <span class="brand-mark" aria-hidden="true">&#9633;</span>
+                <span class="brand-name">3D MAZE GENERATOR</span>
+                <span class="brand-sub">by Marco Carnegie</span>
+            </div>
+ 
+            <nav id="main-nav" aria-label="Primary">
+                <button class="nav-tab is-active" data-page="project" type="button">
+                    <span class="tab-index">01</span>
+                    <span class="tab-label">Project</span>
+                </button>
+                <button class="nav-tab" data-page="about" type="button">
+                    <span class="tab-index">02</span>
+                    <span class="tab-label">About</span>
+                </button>
+                <button class="nav-tab" data-page="controls" type="button">
+                    <span class="tab-index">03</span>
+                    <span class="tab-label">Controls</span>
+                </button>
+            </nav>
+        </header>
+ 
+        <main id="site-main">
+ 
+            <!-- PROJECT PAGE -->
+            <section id="page-project" class="page is-active" data-page="project">
+                <div id="canvas-wrap">
+                    <canvas id="c"></canvas>
+ 
+
+ 
+                    <button id="regen-btn" type="button">&#8635; New Maze</button>
+ 
+                    
+                    <div id="tank-controls" aria-hidden="true">
+                        <div class="tank-cluster tank-cluster--move">
+                            <span class="cluster-label">MOVE</span>
+                            <button class="tank-btn tank-btn--fwd" data-action="forward" type="button">&#9650;</button>
+                            <button class="tank-btn tank-btn--left" data-action="rotate-left" type="button">&#8634;</button>
+                            <button class="tank-btn tank-btn--right" data-action="rotate-right" type="button">&#8635;</button>
+                            <button class="tank-btn tank-btn--back" data-action="backward" type="button">&#9660;</button>
+                        </div>
+ 
+                        <div class="tank-cluster tank-cluster--look">
+                            <span class="cluster-label">LOOK</span>
+                            <button class="tank-btn tank-btn--up" data-action="look-up" type="button">&#8593;</button>
+                            <button class="tank-btn tank-btn--strafe-l" data-action="strafe-left" type="button">&#8592;</button>
+                            <button class="tank-btn tank-btn--strafe-r" data-action="strafe-right" type="button">&#8594;</button>
+                            <button class="tank-btn tank-btn--down" data-action="look-down" type="button">&#8595;</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+ 
+            <!-- ABOUT PAGE -->
+            <section id="page-about" class="page" data-page="about">
+                <div class="prose-panel">
+                    <span class="panel-eyebrow">02 / ABOUT</span>
+                    <h1>Why was this project made?</h1>
+                    <p>
+                        I made this project to helpbuild my algorithm creating skills and to try
+                        make a project in 3D. 
+                    </p>
+                    <h1>How does it work?</h1>
+                    <p>
+                        It works  by generating a perfect maze using
+                        a randomied recursive backtracking algorithm and then sends that result to a
+                        threeJS program to render the maze and a charecter that you can control.
+                        You can explore the maze in first person and view your position in the maze
+                        from a birds eye view. It also renders the maze as one large mesh that allows
+                        for much faster generation of larger mazes
+                    </p>
+                    <div class="fact-grid">
+                        <div class="fact">
+                            <span class="fact-num">01</span>
+                            <span class="fact-title">Algorithm</span>
+                            <span class="fact-body">Recursive Backtracking</span>
+                        </div>
+                        <div class="fact">
+                            <span class="fact-num">02</span>
+                            <span class="fact-title">Renderer</span>
+                            <span class="fact-body">three.js, WebGL, one draw call for the maze</span>
+                        </div>
+                        <div class="fact">
+                            <span class="fact-num">03</span>
+                            <span class="fact-title">Guarantee</span>
+                            <span class="fact-body">Exactly one path between any two cells. No loops, no islands.</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+ 
+            <!-- CONTROLS PAGE -->
+            <section id="page-controls" class="page" data-page="controls">
+                <div class="prose-panel">
+                    <span class="panel-eyebrow">03 / CONTROLS</span>
+                    <h1>Desktop &amp; mobile input reference.</h1>
+                    <div class="controls-table">
+                        <div class="controls-row controls-row--head">
+                            <span>Input</span><span>Action</span>
+                        </div>
+                        <div class="controls-row">
+                            <span>Left click + drag while holding Q</span><span>Orbit camera</span>
+                        </div>
+                        <div class="controls-row">
+                            <span>Scroll</span><span>Zoom</span>
+                        </div>
+                        <div class="controls-row">
+                            <span>WASD and Mouse</span><span>Movement in First Person</span>
+                        </div>
+                        <div class="controls-row">
+                            <span>On-screen D-pads</span><span>Reserved for movement — coming soon</span>
+                        </div>
+                    </div>
+                    <p class="controls-note">
+                        On phones and tablets, two eight-way control clusters appear
+                        over the maze view. They're wired up visually but not yet
+                        connected to camera movement — a placeholder for the tank-style
+                        navigation 
+                    </p>
+                </div>
+            </section>
+ 
+        </main>
+    </div>
 
 </html>
 <!-- use npx vite to run -->

@@ -8,7 +8,7 @@ let moveRight = false;
 let overheadview = false
 let characterController;
 let player
-
+export { player };
 let pointerLockControls;
 let orbitControls;
 
@@ -134,7 +134,7 @@ export function movement(playerHeight, playerMass, speed, velocity, direction,
         pointerLockControls.enabled = true
         orbitControls.enabled = false
         const delta = Math.min((time - prevTime) / 1000, 1/60); //change in time
-        console.log(delta)
+        
         velocity.x -= velocity.x * 0.8 * delta;
         velocity.z -= velocity.z * 0.8 * delta;
 
