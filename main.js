@@ -1,4 +1,5 @@
 import * as t from 'three';
+import './style.css';
 import { RapierPhysics } from 'three/addons/physics/RapierPhysics.js';
 import { RapierHelper } from 'three/addons/helpers/RapierHelper.js';
 import { controlDetection, movement, createp, getOveheadview, setControls, player } from './controls.js';
