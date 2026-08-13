@@ -503,6 +503,21 @@ button {
 }
 
 @media (max-width: 850px) {
+    html, 
+    body, 
+    #app {
+        height: auto;
+        min-height: 100%;
+    }
+
+    #site-main {
+        overflow: visible;
+    }
+
+    .page {
+        height: auto;
+        overflow: visible;
+    }
     #site-header {
         height: auto;
         min-height: 72px;
