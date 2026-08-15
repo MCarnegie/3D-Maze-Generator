@@ -1,13 +1,15 @@
-
-
 <!DOCTYPE html>
 <html lang="en">
- 
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <title>3D Maze Generator</title>
-  
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,400..600&family=Newsreader:ital,wght@0,400;0,500;1,400&family=Martian+Mono:wght@400;500;700&display=swap">
+    <link rel="stylesheet" href="./style.css">
     <script type="importmap">
         {
         "imports": {
@@ -17,18 +19,18 @@
         }
     </script>
 </head>
- 
+
 <body>
 
     <div id="app">
- 
+
         <header id="site-header">
             <div class="brand">
                 <span class="brand-mark" aria-hidden="true">&#9633;</span>
                 <span class="brand-name">3D MAZE GENERATOR</span>
                 <span class="brand-sub">by Marco Carnegie</span>
             </div>
- 
+
             <nav id="main-nav" aria-label="Primary">
                 <button class="nav-tab is-active" data-page="project" type="button">
                     <span class="tab-index">01</span>
@@ -44,39 +46,23 @@
                 </button>
             </nav>
         </header>
- 
+
         <main id="site-main">
- 
+
             <!-- PROJECT PAGE -->
             <section id="page-project" class="page is-active" data-page="project">
                 <div id="canvas-wrap">
                     <canvas id="c"></canvas>
- 
 
- 
+
+
                     <button id="regen-btn" type="button">&#8635; New Maze</button>
- 
-                    
-                    <div id="tank-controls" aria-hidden="true">
-                        <div class="tank-cluster tank-cluster--move">
-                            <span class="cluster-label">MOVE</span>
-                            <button class="tank-btn tank-btn--fwd" data-action="forward" type="button">&#9650;</button>
-                            <button class="tank-btn tank-btn--left" data-action="rotate-left" type="button">&#8634;</button>
-                            <button class="tank-btn tank-btn--right" data-action="rotate-right" type="button">&#8635;</button>
-                            <button class="tank-btn tank-btn--back" data-action="backward" type="button">&#9660;</button>
-                        </div>
- 
-                        <div class="tank-cluster tank-cluster--look">
-                            <span class="cluster-label">LOOK</span>
-                            <button class="tank-btn tank-btn--up" data-action="look-up" type="button">&#8593;</button>
-                            <button class="tank-btn tank-btn--strafe-l" data-action="strafe-left" type="button">&#8592;</button>
-                            <button class="tank-btn tank-btn--strafe-r" data-action="strafe-right" type="button">&#8594;</button>
-                            <button class="tank-btn tank-btn--down" data-action="look-down" type="button">&#8595;</button>
-                        </div>
-                    </div>
+
+
+
                 </div>
             </section>
- 
+
             <!-- ABOUT PAGE -->
             <section id="page-about" class="page" data-page="about">
                 <div class="prose-panel">
@@ -84,11 +70,11 @@
                     <h1>Why was this project made?</h1>
                     <p>
                         I made this project to helpbuild my algorithm creating skills and to try
-                        make a project in 3D. 
+                        make a project in 3D.
                     </p>
                     <h1>How does it work?</h1>
                     <p>
-                        It works  by generating a perfect maze using
+                        It works by generating a perfect maze using
                         a randomied recursive backtracking algorithm and then sends that result to a
                         threeJS program to render the maze and a charecter that you can control.
                         You can explore the maze in first person and view your position in the maze
@@ -114,7 +100,7 @@
                     </div>
                 </div>
             </section>
- 
+
             <!-- CONTROLS PAGE -->
             <section id="page-controls" class="page" data-page="controls">
                 <div class="prose-panel">
@@ -141,16 +127,17 @@
                         On phones and tablets, two eight-way control clusters appear
                         over the maze view. They're wired up visually but not yet
                         connected to camera movement — a placeholder for the tank-style
-                        navigation 
+                        navigation
                     </p>
                 </div>
             </section>
- 
+
         </main>
     </div>
     <script type="module" src="./main.js"></script>
 </body>
+
 </html>
 <!-- use npx vite to run -->
 <!-- to build use npx vite build -->
- <!-- For development use npx serve . -->
+<!-- For development use npx serve . -->

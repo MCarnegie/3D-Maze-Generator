@@ -50,8 +50,8 @@ navTabs.forEach((tab) => {
 
 // creating renderer
 const renderer = new t.WebGLRenderer({ antialias: true, canvas });
-renderer.setSize(canvasWrap.clientWidth, canvasWrap.clientHeight, false);
-
+//renderer.setSize(canvasWrap.clientWidth, canvasWrap.clientHeight, false);
+renderer.setSize(1, 1, false);
 
 //creating scene
 const scene = new t.Scene();
@@ -172,6 +172,7 @@ function onResize() {
 
 new ResizeObserver(onResize).observe(canvasWrap);
 onResize();
+
 
 function newMaze() {
     maze.clearMaze(scene)
