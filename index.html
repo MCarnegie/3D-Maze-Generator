@@ -134,6 +134,15 @@
 
         </main>
     </div>
+      <!--
+        On-device debug console. Renders a tappable floating button on the
+        page itself that opens a DevTools-like panel — console logs, JS
+        errors, and network requests all visible right on the phone, no
+        computer/cable needed. Delete this block once you're done
+        debugging; it's not something you want shipping to real users.
+    -->
+    <script src="https://cdn.jsdelivr.net/npm/eruda"></script>
+    <script>eruda.init();</script>
     <script type="module" src="./main.js"></script>
 </body>
 
