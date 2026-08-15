@@ -9,7 +9,7 @@
  */
 
 import * as t from 'three';
-import rapier from 'https://cdn.skypack.dev/@dimforge/rapier3d-compat';
+import rapier from '@dimforge/rapier3d-compat';
 await rapier.init();
 import * as BufferGeometryUtils from 'three/addons/utils/BufferGeometryUtils.js';
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
