@@ -12,6 +12,7 @@ export { player };
 let pointerLockControls;
 let orbitControls;
 
+
 const overlay = document.getElementById("overlay")
 
 export function createp(px, py, pz, physics, scene, ph, pw) {
@@ -36,7 +37,7 @@ export function getOveheadview() {
 }
 
 //for orbital camera so it centers on any size maze!!!
-function centerOrbital(camera, mazeWidth, wallWidth, mazeHeight) {
+export function centerOrbital(camera, mazeWidth, wallWidth, mazeHeight) {
     camera.position.x = mazeWidth / 2 * wallWidth
     camera.position.y = 100
     camera.position.z = mazeHeight / 2 * wallWidth
@@ -124,9 +125,9 @@ export function controlDetection() {
 let setOrbitPositions = false
 let savedCameraQuaternion = new t.Quaternion();
 export function movement(playerHeight, playerMass, speed, velocity, direction,
-    prevTime, time, camera, physics) {
+    prevTime, time, camera, physics, maze) {
 
-    if (!overheadview) {
+    if (!overheadview && window.innerWidth>=860) {
         if (setOrbitPositions) {
             camera.quaternion.copy(savedCameraQuaternion);
         }
@@ -187,20 +188,27 @@ export function movement(playerHeight, playerMass, speed, velocity, direction,
 
         pointerLockControls.object.position.set(position.x, position.y, position.z)
     } else {
+        
         if (pointerLockControls.isLocked) {
             pointerLockControls.unlock()
         }
         pointerLockControls.enabled = false
 
         orbitControls.enabled = true
-
+        
         if (!setOrbitPositions) {
-            savedCameraQuaternion.copy(camera.quaternion);
-            camera.position.x = player.position.x
-            camera.position.y = 60
-            camera.position.z = player.position.z
-            orbitControls.target.set(player.position.x, 0, player.position.z);
-            camera.lookAt(player.position.x, 0, player.position.z)
+            if(window.innerWidth>=860){
+                savedCameraQuaternion.copy(camera.quaternion);
+                camera.position.x = player.position.x
+                camera.position.y = 60
+                camera.position.z = player.position.z
+                orbitControls.target.set(player.position.x, 0, player.position.z);
+                camera.lookAt(player.position.x, 0, player.position.z)
+            }else{
+                console.log(maze)
+                centerOrbital(camera, maze.width, maze.wallWidth,maze.height)
+            }
+            
             setOrbitPositions = true
         }
 

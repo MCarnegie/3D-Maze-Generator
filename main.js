@@ -2,7 +2,7 @@ import * as t from 'three';
 import './style.css';
 import { RapierPhysics } from 'three/addons/physics/RapierPhysics.js';
 import { RapierHelper } from 'three/addons/helpers/RapierHelper.js';
-import { controlDetection, movement, createp, getOveheadview, setControls, player } from './controls.js';
+import { controlDetection, movement, createp, getOveheadview, setControls, player, centerOrbital } from './controls.js';
 import { PointerLockControls } from 'three/addons/controls/PointerLockControls.js';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { Maze } from './generator.js';
@@ -144,9 +144,11 @@ maze.renderMaze(0, 0, 5)
 let prevTime = performance.now();
 function render() {
     const time = performance.now();
-
-    movement(pheight, pmass, pspeed, new t.Vector3(), new t.Vector3(), prevTime, time, camera, physics,
-        {})
+    
+         movement(pheight, pmass, pspeed, new t.Vector3(), new t.Vector3(), prevTime, time, camera, physics,
+        maze)
+    
+   
     //c.move()
 
     prevTime = time;

@@ -7,10 +7,19 @@
 6. Make ability to switch between birds eye view of maze and first person - DONE
    *Modified so that the camera goes orbital from the players current
    positon so they can see where they are in maze and make bigger mazes easier to solve
+
+
+PC MODE
 7. Make a timer to display while doing the maze
 8. When you reach end of maze, display time and prompt player to restart
-9. Make menu to put in custom values for mazes
 10. Have another mode where you have to collect items in the maze while being chased by an enemy
+
+MOBILE MODE
+13. Have it start in orbital mode when on mobile screens - DONE
+14. Have button to make an AI run through the maze on its own
+
+
+9. Make menu to put in custom values for mazes
 11. Add Textures to walls and sounds
 12. Maze rendering optimizations - DONE
 
